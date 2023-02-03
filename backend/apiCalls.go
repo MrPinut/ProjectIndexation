@@ -7,7 +7,35 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 )
+
+func firstCall(IPAddress string) string {
+	var compteur int = 3000
+	var found bool = true
+	var secretKey string
+
+	for found && compteur < 4002 {
+
+		port := strconv.Itoa(compteur)
+		response, err := http.Get(IPAddress + port)
+		if err != nil {
+			fmt.Printf("The HTTP request failed with error %s\n", err)
+			compteur++
+		} else {
+			found = false
+			data, _ := ioutil.ReadAll(response.Body)
+			//fmt.Println(string(data))
+
+			secretKeyTempo := strings.Split(string(data), ": ")
+			secretKey = secretKeyTempo[1]
+			fmt.Println("The secret Key is: " + secretKey + " on port: " + port)
+		}
+	}
+
+	return secretKey
+}
 
 func secondCall(ipAddress string, keyValue string) {
 	// Ici je fait un Json Vide
@@ -45,5 +73,6 @@ func lastCall(ipAddress string, port string, keyName string, keyValue string) {
 
 		data, _ := ioutil.ReadAll(resp2.Body)
 		fmt.Println(string(data))
+
 	}
 }
