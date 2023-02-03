@@ -2,8 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -39,26 +37,8 @@ func main() {
 			fmt.Println("The secret Key is: " + secretKey + " on port: " + port)
 		}
 	}
-	// Ici je fait un Json Vide
-	values := map[string]string{}
-	json_data, err := json.Marshal(values)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	resp, err := http.Post(SecondIp+"?secretKey="+secretKey, "application/json",
-		bytes.NewBuffer(json_data))
-
-	//response, err := http.Get(SecondIp + "?secretKey=" + secretKey)
-	if err != nil {
-		fmt.Printf("The HTTP request failed with error %s\n", err)
-		compteur++
-	} else {
-		found = false
-		data, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println(string(data))
-	}
+	secondCall(SecondIp, secretKey)
 
 	// Je prends l'info qu'il y a dans le txt
 
@@ -76,27 +56,17 @@ func main() {
 
 	for scanner.Scan() {
 
-		fmt.Println(scanner.Text())
+		//fmt.Println(scanner.Text())
 		apiData = append(apiData, scanner.Text())
 	}
-	fmt.Println("apiData")
+	//fmt.Println("apiData")
 	fmt.Println(apiData)
-	fmt.Println(apiData[2])
+	//fmt.Println(apiData[2])
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 
-	resp2, err := http.Post(IPAddress+apiData[0]+"?"+apiData[1]+"="+apiData[2], "application/json",
-		bytes.NewBuffer(json_data))
-	//response2, err := http.Get(SecondIp + "?secretKey=" + secretKey)
-	if err != nil {
-		fmt.Printf("The HTTP request failed with error %s\n", err)
-		compteur++
-	} else {
-		found = false
-		data, _ := ioutil.ReadAll(resp2.Body)
-		fmt.Println(string(data))
-	}
+	lastCall(IPAddress, apiData[0], apiData[1], apiData[2])
 
 }
