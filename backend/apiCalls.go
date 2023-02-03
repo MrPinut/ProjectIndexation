@@ -63,6 +63,10 @@ func lastCall(ipAddress string, port string, keyName string, keyValue string) {
 	values := map[string]string{}
 	json_data, err := json.Marshal(values)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	resp2, err := http.Post(ipAddress+port+"?"+keyName+"="+keyValue, "application/json",
 		bytes.NewBuffer(json_data))
 	//response2, err := http.Get(SecondIp + "?secretKey=" + secretKey)
